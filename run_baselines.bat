@@ -1,3 +1,3 @@
 @echo off
-python run_trigger_comparison.py --dataset cifar10 --trigger id
+python run_trigger_smoketest.py
 pause

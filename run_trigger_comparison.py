@@ -2,7 +2,8 @@
 run_trigger_comparison.py  —  Week-3/4 full adaptive-trigger evaluation
 
 Runs the adaptive triggers (ID and GV) across multiple seeds and datasets,
-logging everything needed to compare them against the fixed-schedule grid:
+logging everything needed to place them on the ordering-vs-efficiency
+frontier against the fixed-schedule grid:
   - ordering (variance-decay), linear probe, kNN
   - epoch at which dim=128 was reached
   - the growth schedule the trigger produced
@@ -11,13 +12,9 @@ logging everything needed to compare them against the fixed-schedule grid:
 Resumable: skips any (trigger, dataset, seed) whose JSON already exists.
 
 Usage:
-    # all triggers, all seeds, one dataset:
     python run_trigger_comparison.py --dataset cifar10
-
-    # single cell (for SLURM arrays):
-    python run_trigger_comparison.py --dataset cifar10 --trigger id --seed 0
-
-    # summary table from existing results:
+    python run_trigger_comparison.py --dataset cifar10 --trigger id          # ID only
+    python run_trigger_comparison.py --dataset cifar10 --trigger id --seed 0 # single cell
     python run_trigger_comparison.py --summary
 """
 
@@ -48,8 +45,8 @@ SEEDS = [0, 1, 2, 3, 4]
 DATASETS = ["cifar10", "cifar100"]
 OUT = Path("results/raw_triggers")
 
-# Fixed-schedule reference points from the Week-2 grid (ordering means).
-# The cheapest fixed schedule that stays ordered, used as the comparison bar.
+# Fixed-schedule frontier anchors from the Week-2 grid (cheapest safe config).
+# Used to place the adaptive triggers on the ordering-vs-epoch frontier.
 FIXED_REFERENCE = {
     "cifar10":  {"config": "rate1.7/eps8", "ordering": 0.88, "epoch_128": 48},
     "cifar100": {"config": "rate1.7/eps8", "ordering": 0.90, "epoch_128": 48},
@@ -74,10 +71,11 @@ def base_cfg(dataset, seed):
 
 def make_trigger(kind):
     if kind == "id":
+        # v4 committed "fast" config
         return IDTrigger(START_DIM, MAX_DIM, growth_rate=1.7,
                          delta_threshold=0.3, patience=3,
-                         min_epochs_per_stage=3, max_epochs_per_stage=11,
-                         smooth_window=3)
+                         min_epochs_per_stage=3, smooth_window=3,
+                         max_epochs_per_stage=11)
     elif kind == "gv":
         return GVTrigger(START_DIM, MAX_DIM, growth_rate=1.7,
                          relative_threshold=0.05, patience=3,
@@ -161,29 +159,30 @@ def summarize():
         rows.setdefault(key, []).append(r)
 
     print("\n" + "=" * 78)
-    print("ADAPTIVE TRIGGER SUMMARY (mean ± std across seeds)")
+    print("ADAPTIVE TRIGGER SUMMARY (mean +/- std across seeds)")
     print("=" * 78)
     print(f"{'Dataset':<10}{'Trigger':<9}{'n':>3}{'Ordering':>16}{'LinProbe':>16}"
-          f"{'Epoch→128':>12}")
+          f"{'Epoch->128':>12}")
     print("-" * 78)
     for (ds, kind), rs in sorted(rows.items()):
         n = len(rs)
         ordv = np.array([r["ordering_variance_decay"] for r in rs])
         lp = np.array([r["linear_probe"] for r in rs])
         e128 = [r["epoch_reached_128"] for r in rs if r["epoch_reached_128"]]
-        e128_str = f"{np.mean(e128):.1f}" if e128 else "—"
+        e128_str = f"{np.mean(e128):.1f}" if e128 else "-"
         print(f"{ds:<10}{kind:<9}{n:>3}"
-              f"{ordv.mean():>9.3f}±{ordv.std():.3f}"
-              f"{lp.mean():>9.4f}±{lp.std():.4f}"
+              f"{ordv.mean():>9.3f}+/-{ordv.std():.3f}"
+              f"{lp.mean():>9.4f}+/-{lp.std():.4f}"
               f"{e128_str:>12}")
 
     print("-" * 78)
-    print("\nFIXED-SCHEDULE REFERENCE (from Week-2 grid):")
+    print("\nFIXED-SCHEDULE FRONTIER ANCHOR (from Week-2 grid):")
     for ds, ref in FIXED_REFERENCE.items():
         print(f"  {ds}: {ref['config']} ordering~{ref['ordering']}, "
               f"reaches 128 ~epoch {ref['epoch_128']}")
-    print("\nSUCCESS = trigger ordering >= fixed ordering AND reaches 128 "
-          "no later than fixed.")
+    print("\nFRAMING: the trigger is a point on the ordering-vs-efficiency")
+    print("frontier. Compare (ordering, epoch->128) against the fixed grid;")
+    print("the claim is matching the frontier WITHOUT a schedule search.")
 
 
 def main():
@@ -200,12 +199,10 @@ def main():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # single cell
     if args.trigger is not None and args.seed is not None:
         run_cell(args.trigger, args.dataset, args.seed, device)
         return
 
-    # full sweep for one dataset (both triggers, all seeds)
     loaders = build_dataloaders(base_cfg(args.dataset, 0))
     triggers = [args.trigger] if args.trigger else ["id", "gv"]
     for kind in triggers:

@@ -153,14 +153,14 @@ def main():
     # ID-trigger
     id_trig = IDTrigger(START_DIM, MAX_DIM, growth_rate=1.7,
                         delta_threshold=0.3, patience=3,
-                        min_epochs_per_stage=3, smooth_window=3, max_epochs_per_stage=11)
+                        min_epochs_per_stage=3, smooth_window=3)
     results.append(run_trigger("ID-trigger", id_trig, "intrinsic_dim",
                                cfg, device, loaders))
 
     # GV-trigger
     gv_trig = GVTrigger(START_DIM, MAX_DIM, growth_rate=1.7,
                         relative_threshold=0.05, patience=3,
-                        min_epochs_per_stage=3, smooth_window=3, max_epochs_per_stage=11)
+                        min_epochs_per_stage=3)
     results.append(run_trigger("GV-trigger", gv_trig, "gradient_variance",
                                cfg, device, loaders))
 
