@@ -1,0 +1,34 @@
+experiment:
+  name: adaptive_rcg_trigger
+  seed: 0
+  device: cuda
+
+data:
+  dataset: cifar10
+  data_dir: ./data
+  batch_size: 128
+  num_workers: 6
+  val_split: 0.2
+
+model:
+  type: conv_autoencoder
+  start_dim: 6
+  max_dim: 128
+
+training:
+  epochs: 60
+  lr: 0.1
+  optimizer: sgd
+  loss: mse
+
+trigger:
+  type: rcg
+  min_epochs_per_stage: 3
+  patience: 2
+  gap_threshold: 0.05
+  growth_rate: 1.7
+
+evaluation:
+  linear_probe: true
+  knn: true
+  ordering_score: true

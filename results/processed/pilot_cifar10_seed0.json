@@ -1,0 +1,56 @@
+[
+  {
+    "name": "A_slow",
+    "linear_probe": 0.4141,
+    "ordering_variance_decay": 0.917122550814869,
+    "ordering_pc_alignment": 0.1204361945088358,
+    "final_dim": 128,
+    "n_growth_events": 12,
+    "reached_naturally": false
+  },
+  {
+    "name": "A_paper_like",
+    "linear_probe": 0.4074,
+    "ordering_variance_decay": 0.8938266800952206,
+    "ordering_pc_alignment": -0.09338793569990644,
+    "final_dim": 128,
+    "n_growth_events": 6,
+    "reached_naturally": true
+  },
+  {
+    "name": "A_fast",
+    "linear_probe": 0.3929,
+    "ordering_variance_decay": -0.5698361106024538,
+    "ordering_pc_alignment": -0.06081579652189177,
+    "final_dim": 128,
+    "n_growth_events": 4,
+    "reached_naturally": true
+  },
+  {
+    "name": "B_slow",
+    "linear_probe": 0.4107,
+    "ordering_variance_decay": 0.9220895898187146,
+    "ordering_pc_alignment": -0.2388686197026587,
+    "final_dim": 128,
+    "n_growth_events": 6,
+    "reached_naturally": null
+  },
+  {
+    "name": "B_paper",
+    "linear_probe": 0.4151,
+    "ordering_variance_decay": 0.8672919337117743,
+    "ordering_pc_alignment": -0.06039647159350348,
+    "final_dim": 128,
+    "n_growth_events": 6,
+    "reached_naturally": null
+  },
+  {
+    "name": "B_fast",
+    "linear_probe": 0.3987,
+    "ordering_variance_decay": -0.3401677806262589,
+    "ordering_pc_alignment": 0.12782945372466456,
+    "final_dim": 128,
+    "n_growth_events": 4,
+    "reached_naturally": null
+  }
+]

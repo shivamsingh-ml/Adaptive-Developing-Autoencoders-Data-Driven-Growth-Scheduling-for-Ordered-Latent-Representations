@@ -1,0 +1,31 @@
+experiment:
+  name: baseline_devae_fixed
+  seed: 0
+  device: cuda
+
+data:
+  dataset: cifar100
+  data_dir: ./data
+  batch_size: 128
+  num_workers: 0
+
+model:
+  type: conv_autoencoder
+  latent_dim: 128
+  start_dim: 6
+  max_dim: 128
+
+training:
+  epochs: 60
+  lr: 0.1
+  optimizer: sgd
+  loss: mse
+
+trigger:
+  type: fixed
+  schedule: [6,6,6,6,6,6,10,10,10,10,10,10,17,17,17,17,17,17,17,29,29,29,29,29,29,29,50,50,50,50,50,50,50,50,85,85,85,85,85,85,85,85,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128]
+
+evaluation:
+  linear_probe: true
+  knn: true
+  ordering_score: true

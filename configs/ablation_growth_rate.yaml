@@ -1,0 +1,32 @@
+experiment:
+  name: ablation_growth_rate
+  seed: 0
+  device: cuda
+
+data:
+  dataset: cifar10
+  data_dir: ./data
+  batch_size: 128
+  num_workers: 6
+  val_split: 0.2
+
+model:
+  type: conv_autoencoder
+  start_dim: 4
+  max_dim: 128
+
+training:
+  epochs: 60
+  lr: 0.1
+  optimizer: sgd
+  loss: mse
+
+trigger:
+  type: fixed_growth_rate
+  growth_rates: [1.2, 1.5, 1.7, 2.0]
+  start_dims: [4, 6, 10, 16, 24]
+
+evaluation:
+  linear_probe: true
+  knn: true
+  ordering_score: true

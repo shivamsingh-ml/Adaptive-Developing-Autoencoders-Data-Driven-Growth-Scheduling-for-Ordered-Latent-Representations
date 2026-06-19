@@ -1,0 +1,14 @@
+{
+  "dataset": "cifar10",
+  "rate": 2.5,
+  "epochs_per_stage": 4,
+  "seed": 0,
+  "linear_probe": 0.3939,
+  "knn5": 0.3557,
+  "ordering_variance_decay": -0.5554213971800036,
+  "ordering_pc_alignment": -0.05972186068302479,
+  "final_intrinsic_dim": 18.189630642140543,
+  "final_dim": 128,
+  "reached_naturally": true,
+  "n_growth_events": 4
+}
