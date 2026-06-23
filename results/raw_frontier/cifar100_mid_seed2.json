@@ -1,0 +1,51 @@
+{
+  "point": "mid",
+  "dataset": "cifar100",
+  "seed": 2,
+  "params": {
+    "patience": 4,
+    "min_epochs_per_stage": 3,
+    "max_epochs_per_stage": 11,
+    "smooth_window": 3,
+    "delta_threshold": 0.3
+  },
+  "ordering_variance_decay": 0.9050826313861929,
+  "linear_probe": 0.1946,
+  "knn5": 0.1485,
+  "epoch_reached_128": 49,
+  "reached_128": true,
+  "n_growth_events": 6,
+  "growth_schedule": [
+    [
+      7,
+      6,
+      10
+    ],
+    [
+      18,
+      10,
+      17
+    ],
+    [
+      28,
+      17,
+      29
+    ],
+    [
+      35,
+      29,
+      49
+    ],
+    [
+      42,
+      49,
+      83
+    ],
+    [
+      49,
+      83,
+      128
+    ]
+  ],
+  "final_dim": 128
+}
